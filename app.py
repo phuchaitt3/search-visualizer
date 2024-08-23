@@ -243,21 +243,21 @@ if st.button("Visualize Path"):
                 heuristic = list(map(int, input_lines[2 + n].split()))
             
             # Run the selected algorithm
-            path = []
+            explored, path = [], []
             if algorithm == "BFS":
-                path = bfs(adj_matrix, start, end)
+                explored, path = bfs(adj_matrix, start, end)
             elif algorithm == "DFS":
-                path = dfs(adj_matrix, start, end)
+                explored, path = dfs(adj_matrix, start, end)
             elif algorithm == "UCS":
-                path = ucs(adj_matrix, start, end)
+                explored, path = ucs(adj_matrix, start, end)
             elif algorithm == "IDS":
-                path = ids(adj_matrix, start, end)
+                explored, path = ids(adj_matrix, start, end)
             elif algorithm == "GBFS":
-                path = gbfs(adj_matrix, start, end, heuristic)
+                explored, path = gbfs(adj_matrix, start, end, heuristic)
             elif algorithm == "A*":
-                path = astar(adj_matrix, start, end, heuristic)
+                explored, path = astar(adj_matrix, start, end, heuristic)
             elif algorithm == "Hill-Climbing":
-                path = hc(adj_matrix, start, end, heuristic)
+                explored, path = hc(adj_matrix, start, end, heuristic)
             else:
                 st.error("Invalid algorithm selection.")
                 path = []
