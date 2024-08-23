@@ -213,13 +213,13 @@ def hc(arr, source, destination, heuristic):
 # Streamlit Interface
 st.title("Search Algorithms Path Visualization")
 
-# Selection box for algorithm choice
+# Algorithm selection
 algorithm = st.selectbox(
     "Choose an algorithm",
     ["BFS", "DFS", "UCS", "IDS", "GBFS", "A*", "Hill-Climbing"]
 )
 
-# Large Text Area Input
+# Text input for graph data
 input_data = st.text_area("Paste the input data (number of nodes, start/end nodes, adjacency matrix, and node values):", 
                           height=200, 
                           placeholder="Example:\n5\n0 4\n0 1 0 0 0\n1 0 1 0 0\n0 1 0 1 0\n0 0 1 0 1\n0 0 0 1 0\n7 6 5 4 3")
@@ -237,13 +237,13 @@ if st.button("Visualize Path"):
             for i in range(2, 2 + n):
                 adj_matrix.append(list(map(int, input_lines[i].split())))
             
-            # Extract the heuristic if needed
+            # Extract the heuristic for specific algorithms
+            heuristic = None
             if algorithm in ["GBFS", "A*", "Hill-Climbing"]:
                 heuristic = list(map(int, input_lines[2 + n].split()))
-            else:
-                heuristic = None
             
             # Run the selected algorithm
+            path = []
             if algorithm == "BFS":
                 path = bfs(adj_matrix, start, end)
             elif algorithm == "DFS":
@@ -262,10 +262,23 @@ if st.button("Visualize Path"):
                 st.error("Invalid algorithm selection.")
                 path = []
 
-            # Visualization (if applicable)
+            # Visualization using HTML + D3.js
             if path:
                 st.write("### Path:", path)
-                # Here you can integrate the visualization code (e.g., D3.js) if necessary
+                
+                # Read HTML template (ensure you have the HTML content directly in the file or hardcode it)
+                with open(os.path.join('static', 'index.html'), 'r') as f:
+                    html_template = f.read()
+                
+                # Inject the values into the HTML template
+                html_content = html_template.replace("{{ n }}", json.dumps(n))\
+                                            .replace("{{ start }}", json.dumps(start))\
+                                            .replace("{{ end }}", json.dumps(end))\
+                                            .replace("{{ adj_matrix }}", json.dumps(adj_matrix))\
+                                            .replace("{{ path }}", json.dumps(path))
+
+                # Display the HTML with D3.js visualizing the path
+                st.components.v1.html(html_content, height=600)
             else:
                 st.error("No path found.")
             
