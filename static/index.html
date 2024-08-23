@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BFS Visualizer</title>
+    <style>
+        #graph {
+            width: 100%;
+            height: 500px;
+            border: 1px solid white;
+        }
+    </style>
+</head>
+<body>
+    <h1>BFS Path Visualization</h1>
+    <div id="graph"></div>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script>
+        // These variables will be set by Streamlit via the `st.components.v1.html()` function
+        const n = {{ n }};
+        const start = {{ start }};
+        const end = {{ end }};
+        const adjMatrix = {{ adj_matrix }};
+        const path = {{ path }};
+
+        function visualizeGraph(n, adjMatrix, path) {
+            const svg = d3.select('#graph').html('').append('svg')
+                .attr('width', '100%')
+                .attr('height', '100%');
+
+            const width = document.getElementById('graph').clientWidth;
+            const height = document.getElementById('graph').clientHeight;
+
+            const nodes = Array.from({ length: n }, (_, i) => ({ id: i }));
+            const links = [];
+            for (let i = 0; i < n; i++) {
+                for (let j = 0; j < n; j++) {
+                    if (adjMatrix[i][j]) {
+                        links.push({ source: i, target: j });
+                    }
+                }
+            }
+
+            const simulation = d3.forceSimulation(nodes)
+                .force('link', d3.forceLink(links).id(d => d.id).distance(100))
+                .force('charge', d3.forceManyBody().strength(-400))
+                .force('center', d3.forceCenter(width / 2, height / 2));
+
+            const link = svg.append('g')
+                .selectAll('line')
+                .data(links)
+                .enter().append('line')
+                .attr('stroke-width', 2)
+                .attr('stroke', d => path.includes(d.source.id) && path.includes(d.target.id) ? 'red' : 'white');
+
+            const node = svg.append('g')
+                .selectAll('circle')
+                .data(nodes)
+                .enter().append('circle')
+                .attr('r', 10)
+                .attr('fill', d => path.includes(d.id) ? 'red' : 'blue')
+                .call(d3.drag()
+                    .on('start', dragstarted)
+                    .on('drag', dragged)
+                    .on('end', dragended));
+
+            node.append('title')
+                .text(d => d.id);
+
+            const labels = svg.append('g')
+                .selectAll('text')
+                .data(nodes)
+                .enter().append('text')
+                .attr('x', d => d.x)
+                .attr('y', d => d.y)
+                .attr('dy', -15)
+                .attr('text-anchor', 'middle')
+                .attr('fill', 'white')  // Set the text color to white
+                .text(d => d.id);
+
+            simulation.on('tick', () => {
+                link
+                    .attr('x1', d => d.source.x)
+                    .attr('y1', d => d.source.y)
+                    .attr('x2', d => d.target.x)
+                    .attr('y2', d => d.target.y);
+
+                node
+                    .attr('cx', d => d.x)
+                    .attr('cy', d => d.y);
+
+                labels
+                    .attr('x', d => d.x)
+                    .attr('y', d => d.y);
+            });
+
+            function dragstarted(event, d) {
+                if (!event.active) simulation.alphaTarget(0.3).restart();
+                d.fx = d.x;
+                d.fy = d.y;
+            }
+
+            function dragged(event, d) {
+                d.fx = event.x;
+                d.fy = event.y;
+            }
+
+            function dragended(event, d) {
+                if (!event.active) simulation.alphaTarget(0);
+                d.fx = null;
+                d.fy = null;
+            }
+        }
+
+        // Call the visualization function after all the variables are set
+        visualizeGraph(n, adjMatrix, path);
+    </script>
+</body>
+</html>
