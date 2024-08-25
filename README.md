@@ -1,4 +1,4 @@
-Hosting a website on Streamlit Sharing:
+Hosting a website on Streamlit Share:
 - Prerequisites: A GitHub account; Streamlit app should be in a public GitHub repository.
 - Go to Streamlit Share website.
 - Log in with GitHub account.
