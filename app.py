@@ -266,12 +266,13 @@ if st.button("Visualize Path"):
             if path:
                 st.write("### Path:", path)
                 
-                # Read HTML template (ensure you have the HTML content directly in the file or hardcode it)
+                # Read HTML template
                 with open(os.path.join('static', 'index.html'), 'r') as f:
                     html_template = f.read()
                 
                 # Inject the values into the HTML template
-                html_content = html_template.replace("{{ n }}", json.dumps(n))\
+                html_content = html_template.replace("{{ algorithm }}", algorithm)\
+                                            .replace("{{ n }}", json.dumps(n))\
                                             .replace("{{ start }}", json.dumps(start))\
                                             .replace("{{ end }}", json.dumps(end))\
                                             .replace("{{ adj_matrix }}", json.dumps(adj_matrix))\

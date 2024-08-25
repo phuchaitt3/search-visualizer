@@ -3,17 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BFS Visualizer</title>
+    <title>{{ algorithm }} Path Visualization</title>
     <style>
+        body {
+            background-color: white;
+            color: black;
+        }
         #graph {
             width: 100%;
             height: 500px;
-            border: 1px solid white;
         }
     </style>
 </head>
 <body>
-    <h1>BFS Path Visualization</h1>
+    <h1>{{ algorithm }} Path Visualization</h1>
     <div id="graph"></div>
 
     <script src="https://d3js.org/d3.v7.min.js"></script>
@@ -53,14 +56,16 @@
                 .data(links)
                 .enter().append('line')
                 .attr('stroke-width', 2)
-                .attr('stroke', d => path.includes(d.source.id) && path.includes(d.target.id) ? 'red' : 'white');
+                .attr('stroke', d => path.includes(d.source.id) && path.includes(d.target.id) ? 'black' : 'gray');
 
             const node = svg.append('g')
                 .selectAll('circle')
                 .data(nodes)
                 .enter().append('circle')
                 .attr('r', 10)
-                .attr('fill', d => path.includes(d.id) ? 'red' : 'blue')
+                .attr('fill', d => path.includes(d.id) ? 'black' : 'white')
+                .attr('stroke', 'black')
+                .attr('stroke-width', 2)
                 .call(d3.drag()
                     .on('start', dragstarted)
                     .on('drag', dragged)
@@ -77,7 +82,7 @@
                 .attr('y', d => d.y)
                 .attr('dy', -15)
                 .attr('text-anchor', 'middle')
-                .attr('fill', 'white')  // Set the text color to white
+                .attr('fill', 'black')  // Set the text color to black
                 .text(d => d.id);
 
             simulation.on('tick', () => {
