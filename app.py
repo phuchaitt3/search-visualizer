@@ -211,7 +211,7 @@ def hc(arr, source, destination, heuristic):
     pass
 
 # Streamlit Interface
-st.title("Search Algorithms Path Visualization")
+st.title("Search Algorithms Visualization")
 
 # Algorithm selection
 algorithm = st.selectbox(
